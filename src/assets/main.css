@@ -9,3 +9,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
