@@ -1,36 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import IconTrash from './components/icons/IconTrash.vue';
+import { ref } from "vue"
+import { useStore } from "vuex"
+import IconTrash from "./components/icons/IconTrash.vue"
+import type { ITask } from "@/types/task"
+import type { IStore } from "@/types/store"
 
-interface ITask {
-  id: string
-  name: string
-}
-
+const store = useStore<IStore>()
 const newTask = ref("")
-const tasks = ref<ITask[]>([])
 
 const addTask = () => {
   if (newTask.value.length <= 0) return alert("Preencha o campo!")
 
-  const newObjTask = {
-    id: String(Date.now()),
-    name: newTask.value
-  }
-
-  tasks.value.push(newObjTask)
-
-  console.log('newTask: ', newTask)
+  store.commit("addTask", newTask.value)
 
   newTask.value = ""
 }
 
 const deleteTask = (task: ITask) => {
-  const idxTask = tasks.value.findIndex(obj => obj.id === task.id)
+  const idxTask = store.state.tasks.findIndex(obj => obj.id === task.id)
 
   if (idxTask < 0) return alert("Erro ao exluir a tarefa!")
 
-  tasks.value.splice(idxTask, 1)
+  store.commit("deleteTask", idxTask)
 }
 </script>
 
@@ -43,8 +34,8 @@ const deleteTask = (task: ITask) => {
   </div>
 
   <ul>
-    <li v-for="task in tasks" :key="task.id">
-      <span>{{ task.name }}</span>
+    <li v-for="(task, idx) in store.state.tasks" :key="task.id">
+      <span>{{ idx + 1 }}) {{ task.name }}</span>
 
       <button @click="deleteTask(task)">
         <IconTrash />
